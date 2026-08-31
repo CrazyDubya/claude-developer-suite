@@ -1,16 +1,20 @@
 # claude-skills
 
-Twelve Claude Code skills, plus a SQLite layer for tracking and inspecting them.
+Twelve Claude Code skills, plus a SQLite layer for tracking them.
 
 ## The skills
 
-`accessibility-auditor`, `api-documentation-generator`, `code-style-enforcer`, `configuration-validator`, `database-migration-helper`, `dependency-audit-assistant`, `docker-optimizer`, `error-tracking-integrator`, `git-workflow-enforcer`, `internationalization-helper`, `performance-profiler`.
+Each is a directory containing a `SKILL.md`, and where useful `reference/`, `templates/` and `scripts/`. Twelve `SKILL.md` files are present. Among them: `accessibility-auditor`, `api-documentation-generator`, `code-style-enforcer`, `configuration-validator`, `database-migration-helper`, `dependency-audit-assistant`, `docker-optimizer`, `error-tracking-integrator`, `git-workflow-enforcer`, `internationalization-helper`, `performance-profiler`.
 
-Each is a directory with a `SKILL.md` and, where useful, `reference/`, `templates/` and `scripts/`. The migration helper ships templates for Alembic, Knex, Prisma, Rails, Sequelize and TypeORM; the docker optimizer ships an optimized Dockerfile and dockerignore.
+`database-migration-helper` ships templates for Alembic, Knex, Prisma, Rails, Sequelize and TypeORM. `docker-optimizer` ships an optimized Dockerfile and a `.dockerignore`. `dependency-audit-assistant` includes a license-checking script and vulnerability and license references.
 
 ## The database
 
-`scripts/init_db.py` scans the skills directory and populates `data/skills_metadata.db` with metadata, templates, scripts and references. `scripts/skill_dashboard.py` reads it back, interactively or as quick views. `lib/skill_db.py` holds the access layer and `data/schema.sql` the schema. See `DATABASE_README.md`.
+Per `DATABASE_README.md`:
+
+- `scripts/init_db.py` scans `~/.claude/skills/` and populates `data/skills_metadata.db` with metadata, templates, scripts and references.
+- `scripts/skill_dashboard.py` reads it back, interactively or as quick views.
+- `lib/skill_db.py` is the access layer; `data/schema.sql` the schema.
 
 ## Installing
 
