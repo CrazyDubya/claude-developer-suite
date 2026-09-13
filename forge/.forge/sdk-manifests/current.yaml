@@ -1,0 +1,81 @@
+# Claude SDK Version Manifest
+# This file tracks SDK versions and content compatibility
+
+sdk:
+  name: "@anthropic-ai/sdk"
+  current_stable: "0.34.0"
+  previous_stable: "0.33.0"
+  latest_beta: "0.35.0-beta.1"
+
+  changelog_url: "https://github.com/anthropic-ai/anthropic-sdk-python/releases"
+  documentation_url: "https://docs.anthropic.com"
+
+# SDK version compatibility matrix
+compatibility:
+  "0.34.0":
+    release_date: "2024-12-15"
+    breaking_changes: false
+    new_features:
+      - "Prompt caching improvements"
+      - "Enhanced streaming events"
+    deprecated: []
+
+  "0.33.0":
+    release_date: "2024-11-20"
+    breaking_changes: false
+    new_features:
+      - "Tool use improvements"
+      - "Vision enhancements"
+    deprecated: []
+
+# Content validation status
+content_validation:
+  last_full_run: "2024-12-20T10:00:00Z"
+  sdk_version_tested: "0.34.0"
+
+  categories:
+    fundamentals:
+      status: "passing"
+      last_validated: "2024-12-20T10:00:00Z"
+
+    messaging:
+      status: "passing"
+      last_validated: "2024-12-20T10:00:00Z"
+
+    tools:
+      status: "passing"
+      last_validated: "2024-12-20T10:00:00Z"
+
+    agents:
+      status: "passing"
+      last_validated: "2024-12-20T10:00:00Z"
+
+    advanced:
+      status: "passing"
+      last_validated: "2024-12-20T10:00:00Z"
+
+# Validation freshness indicators
+freshness_rules:
+  green:
+    description: "Validated against current SDK within 7 days"
+    max_age_days: 7
+
+  yellow:
+    description: "Validated against previous SDK version"
+    condition: "validated_version < current_stable"
+
+  red:
+    description: "Validation failing or stale"
+    condition: "failing OR age > 30 days"
+
+# Known issues to surface to users
+known_issues: []
+
+# Upgrade guides between versions
+upgrade_guides:
+  "0.33.0_to_0.34.0":
+    breaking: false
+    notes: |
+      No breaking changes. New features are opt-in.
+      - Prompt caching: Use `cache_control` parameter
+      - Enhanced streaming: New event types available

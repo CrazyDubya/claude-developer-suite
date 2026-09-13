@@ -1,0 +1,34 @@
+name: web-fullstack
+description: Full-stack web development with React, Node.js, and database
+
+agents:
+  # Core orchestration
+  - agent-orchestrator
+  
+  # Frontend specialists
+  - react-specialist
+  - html-specialist
+  - css-specialist
+  - javascript-generalist
+  - typescript-specialist
+  
+  # Backend specialists
+  - nodejs-specialist
+  - express-specialist
+  - api-routing-specialist
+  
+  # Database & optimization
+  - database-optimizer
+  - performance-optimizer
+  
+  # Testing & deployment
+  - jest-specialist
+  - ci-cd-orchestrator
+  
+  # Code quality
+  - code-reviewer-bot
+  - security-auditor
+
+domains: [web, backend]
+capabilities: [development, testing, deployment, optimization]
+tags: [react, nodejs, fullstack]

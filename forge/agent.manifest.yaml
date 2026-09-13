@@ -1,0 +1,365 @@
+# ClaudeApp Agent Manifest
+# This is not documentation - this governs how Claude Code operates in this repository.
+# It is the living instantiation of AAL principles on the Claude Agent SDK.
+
+apiVersion: aal/v1
+kind: AgentManifest
+
+metadata:
+  id: claude-app-forge
+  version: 0.2.0
+  name: Claude App Forge Agent
+  description: |
+    The agent that operates within the Claude App Forge repository.
+    This manifest defines its identity, capabilities, constraints, and behavior.
+    Claude Code reading this file IS the agent being configured.
+
+  labels:
+    type: meta-agent
+    domain: developer-tools
+    maturity: experimental
+
+# =============================================================================
+# ENTITY: Who is this agent?
+# =============================================================================
+spec:
+  entity:
+    model: claude-opus-4-5-20251101
+
+    # This agent operates in multiple modes based on context
+    modes_available:
+      - navigation    # Assess position, recommend paths
+      - teaching      # Explain concepts, provide feedback
+      - forge         # Walk through blueprint instantiation
+      - publication   # Guide through deployment
+      - building      # Actually construct code and systems
+
+    # Behavioral expectations (for drift detection)
+    fingerprint:
+      typical_response_length: 500-2000
+      tool_usage_pattern: high  # This agent uses tools frequently
+      verification_behavior: iterative  # Verifies work in loops
+
+# =============================================================================
+# CONTEXT: What does this agent know?
+# =============================================================================
+  context:
+    # Primary context sources
+    sources:
+      - path: CLAUDE.md
+        type: system_context
+        description: Core instructions and project conventions
+
+      - path: curriculum/graph.yaml
+        type: knowledge_graph
+        description: Skill dependency graph for teaching mode
+
+      - path: blueprints/registry.yaml
+        type: registry
+        description: Available blueprint patterns
+
+      - path: .forge/agent-abstraction-layer/DESIGN.md
+        type: specification
+        description: AAL design principles
+
+    # Memory configuration
+    memory:
+      # Session memory - what happened in this conversation
+      session:
+        strategy: sliding_window
+        max_turns: 50
+
+      # Project memory - persisted across sessions
+      project:
+        storage: .forge/memory/
+        types:
+          - learner_progress    # Track user's curriculum progress
+          - blueprint_instances # Track instantiated blueprints
+          - decisions_log       # Log of significant decisions made
+
+# =============================================================================
+# PERMISSIONS: What can this agent do?
+# =============================================================================
+  permissions:
+    # Tool access levels
+    tools:
+      # Full access - core development tools
+      allowed:
+        - Read
+        - Edit
+        - Write
+        - Glob
+        - Grep
+        - Bash
+        - Task
+        - TodoWrite
+        - WebFetch
+        - WebSearch
+
+      # Require confirmation for destructive actions
+      require_approval:
+        - delete_file
+        - git_push_force
+        - modify_credentials
+
+      # Never allowed
+      denied:
+        - execute_untrusted_code
+        - access_external_systems_without_context
+
+    # Scope restrictions
+    scope:
+      # This agent operates within the repository
+      allowed_paths:
+        - /home/user/ClaudeApp/**
+
+      # Sensitive paths require extra care
+      sensitive_paths:
+        - .env*
+        - credentials.*
+        - "*.key"
+        - "*.pem"
+
+    # Resource limits
+    resources:
+      max_file_size_kb: 500
+      max_files_per_operation: 20
+
+# =============================================================================
+# TOOLS: Extended tool definitions
+# =============================================================================
+  tools:
+    # Standard SDK tools are available
+    # These are extensions/customizations
+
+    - name: curriculum_navigator
+      description: Navigate the skill graph and recommend learning paths
+      implementation: .forge/tools/curriculum_navigator.py
+
+    - name: blueprint_instantiator
+      description: Walk through blueprint decisions and generate code
+      implementation: .forge/tools/blueprint_instantiator.py
+
+    - name: validation_runner
+      description: Run validation checks on generated code
+      implementation: .forge/tools/validation_runner.py
+
+# =============================================================================
+# SKILLS: High-level capabilities
+# =============================================================================
+  skills:
+    - id: teach-concept
+      name: Teach Concept
+      description: Explain a curriculum node with examples and exercises
+      triggers:
+        - "teach me about"
+        - "explain"
+        - "how does * work"
+      requires_context:
+        - curriculum/graph.yaml
+        - curriculum/nodes/
+
+    - id: forge-blueprint
+      name: Forge Blueprint
+      description: Guide user through instantiating a blueprint
+      triggers:
+        - "create a"
+        - "build me"
+        - "forge"
+      requires_context:
+        - blueprints/registry.yaml
+        - blueprints/*/
+
+    - id: navigate-curriculum
+      name: Navigate Curriculum
+      description: Assess progress and recommend next steps
+      triggers:
+        - "where should I start"
+        - "what's next"
+        - "my progress"
+      requires_context:
+        - curriculum/graph.yaml
+        - journals/
+
+# =============================================================================
+# HOOKS: Lifecycle intervention points
+# =============================================================================
+  hooks:
+    # Before processing user input
+    pre_input:
+      - name: detect_mode
+        description: Detect which mode the user's request implies
+        handler: .forge/hooks/detect_mode.py
+
+      - name: load_learner_context
+        description: Load relevant learner progress for personalization
+        handler: .forge/hooks/load_learner_context.py
+
+    # Before using a tool
+    pre_tool_use:
+      - name: validate_path_access
+        description: Ensure path operations stay within allowed scope
+        handler: .forge/hooks/validate_path_access.py
+        matcher: ["Read", "Write", "Edit", "Bash"]
+
+      - name: log_tool_decision
+        description: Log tool usage for observability
+        handler: .forge/hooks/log_tool_decision.py
+        matcher: "*"
+
+    # After tool execution
+    post_tool_use:
+      - name: track_file_changes
+        description: Track what files were modified
+        handler: .forge/hooks/track_file_changes.py
+        matcher: ["Write", "Edit"]
+
+      - name: update_validation_status
+        description: Mark content as needing re-validation
+        handler: .forge/hooks/update_validation_status.py
+
+    # On errors
+    on_error:
+      - name: graceful_recovery
+        description: Attempt recovery strategies before failing
+        handler: .forge/hooks/graceful_recovery.py
+
+    # On low confidence (AAL extension)
+    on_low_confidence:
+      - name: request_clarification
+        description: Ask user for clarification when uncertain
+        handler: .forge/hooks/request_clarification.py
+        threshold: 0.5
+
+# =============================================================================
+# SUBAGENTS: Specialized sub-agents for delegation
+# =============================================================================
+  subagents:
+    - id: code-reviewer
+      name: Code Reviewer
+      description: Reviews generated code for quality and correctness
+      allowed_tools: [Read, Grep, Glob]
+      denied_tools: [Write, Edit, Bash]
+      system_prompt: |
+        You are a code reviewer. Analyze code for:
+        - Correctness and potential bugs
+        - Security vulnerabilities
+        - Adherence to project patterns
+        - Claude SDK best practices
+        Return structured feedback, do not modify files.
+
+    - id: test-writer
+      name: Test Writer
+      description: Writes tests for generated code
+      allowed_tools: [Read, Write, Edit, Bash]
+      system_prompt: |
+        You are a test writer. Given code, write comprehensive tests:
+        - Unit tests for individual functions
+        - Integration tests for workflows
+        - Use pytest patterns from this repo
+        Run tests to verify they pass.
+
+    - id: documentation-writer
+      name: Documentation Writer
+      description: Generates documentation for code and concepts
+      allowed_tools: [Read, Write, Glob]
+      denied_tools: [Bash]
+      system_prompt: |
+        You are a documentation writer. Create clear, accurate docs:
+        - API documentation
+        - Usage examples
+        - Curriculum node content
+        Write in the style of existing project documentation.
+
+# =============================================================================
+# UNCERTAINTY: How to handle stochasticity
+# =============================================================================
+  uncertainty:
+    # Confidence threshold for acting without confirmation
+    confidence_threshold: 0.7
+
+    # When confidence is low, what to do
+    low_confidence_strategy: ask_clarification
+
+    # For critical operations, explore multiple paths
+    exploration:
+      enabled: true
+      strategy: beam_search
+      beam_width: 2
+      triggers:
+        - architecture_decisions
+        - multi_file_changes
+        - security_sensitive_operations
+
+# =============================================================================
+# OBSERVABILITY: How to observe this unintelligible entity
+# =============================================================================
+  observability:
+    # Trace all operations
+    tracing:
+      enabled: true
+      export_path: .forge/traces/
+
+    # Log all decisions
+    decision_logging:
+      enabled: true
+      log_path: .forge/logs/decisions.jsonl
+      capture:
+        - tool_selection
+        - mode_detection
+        - path_choices
+        - error_recovery
+
+    # Behavioral fingerprinting for drift detection
+    fingerprinting:
+      enabled: true
+      baseline_path: .forge/baselines/behavior.json
+      metrics:
+        - response_length_distribution
+        - tool_usage_frequency
+        - error_rate
+        - mode_distribution
+      drift_threshold: 0.15
+      alert_on_drift: true
+
+# =============================================================================
+# INTEGRATIONS: External connections
+# =============================================================================
+  integrations:
+    # MCP servers for extended capabilities
+    mcp:
+      enabled: true
+      servers:
+        - name: filesystem
+          description: Extended file operations
+        - name: memory
+          description: Persistent memory across sessions
+
+    # Future: IDE integration
+    ide:
+      vscode_extension: claude-app-forge
+      features:
+        - curriculum_sidebar
+        - blueprint_wizard
+        - validation_panel
+
+# =============================================================================
+# EVOLUTION: How this agent changes over time
+# =============================================================================
+  evolution:
+    # Version tracking
+    versioning:
+      strategy: semantic
+      changelog_path: .forge/CHANGELOG.md
+
+    # When the manifest changes, what happens
+    on_manifest_change:
+      - validate_manifest_schema
+      - run_behavioral_tests
+      - update_baseline_fingerprint
+
+    # Learning from interactions (future)
+    learning:
+      enabled: false  # Not yet implemented
+      feedback_collection: true
+      improvement_suggestions: true

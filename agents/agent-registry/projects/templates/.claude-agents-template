@@ -1,0 +1,30 @@
+# Project Agent Manifest
+# This file controls which agents are available in this project
+# Only agents listed here will be loaded into the context window
+# 
+# Format:
+# agents:
+#   - name: agent-name
+#     description: Brief description of what this agent does
+#     priority: high|medium|low (optional)
+#     tags: [tag1, tag2] (optional)
+
+agents:
+  # Core agents - always loaded first
+  - name: agent-orchestrator
+    description: Coordinates multiple agents for complex tasks
+    priority: high
+    
+  # Project-specific agents will be added here based on project type
+  # Use: /agent-manager setup <project-type> to populate this section
+  
+# Configuration
+config:
+  # Maximum number of agents to load at once (prevents context overflow)
+  max_agents: 15
+  
+  # Load order priority: high -> medium -> low
+  respect_priority: true
+  
+  # Auto-load agent descriptions on startup
+  preload_descriptions: false

@@ -1,0 +1,189 @@
+# Decision Points for Document Processor Blueprint
+
+version: "1.0"
+blueprint_id: "document-processor"
+
+decisions:
+  - id: "input_format"
+    question: "What document formats will you process?"
+    type: "multi_choice"
+    options:
+      - value: "text"
+        label: "Plain Text"
+        description: "Simple text content. Easiest to implement."
+        generates: ["src/input/text.py"]
+
+      - value: "pdf"
+        label: "PDF Documents"
+        description: "Extract text from PDFs. Requires pdf parsing."
+        generates: ["src/input/pdf.py"]
+        dependencies: ["pypdf"]
+
+      - value: "image"
+        label: "Images (Vision)"
+        description: "Process document images using Claude's vision."
+        generates: ["src/input/image.py"]
+        requires_skill: "vision"
+
+      - value: "html"
+        label: "HTML/Web Pages"
+        description: "Parse and process web content."
+        generates: ["src/input/html.py"]
+        dependencies: ["beautifulsoup4"]
+
+    default: ["text"]
+    min_selections: 1
+
+  - id: "processing_mode"
+    question: "How should long documents be handled?"
+    type: "single_choice"
+    options:
+      - value: "single_pass"
+        label: "Single Pass"
+        description: "Process entire document at once. Limited by context window."
+
+      - value: "chunked"
+        label: "Chunked Processing"
+        description: "Split document into chunks, process each, merge results."
+        generates: ["src/chunking.py"]
+        follow_up:
+          - id: "chunk_size"
+            question: "Target tokens per chunk?"
+            type: "number"
+            default: 50000
+            min: 10000
+            max: 150000
+
+      - value: "hierarchical"
+        label: "Hierarchical"
+        description: "Process sections, then synthesize. Best for structured docs."
+        generates: ["src/hierarchical.py"]
+
+    default: "chunked"
+
+  - id: "extraction_types"
+    question: "What types of information will you extract?"
+    type: "multi_choice"
+    options:
+      - value: "entities"
+        label: "Named Entities"
+        description: "People, organizations, dates, amounts, locations"
+        generates: ["src/tools/extraction.py"]
+
+      - value: "summary"
+        label: "Summaries"
+        description: "Section and document-level summaries"
+        generates: ["src/tools/summarization.py"]
+
+      - value: "classification"
+        label: "Document Classification"
+        description: "Categorize document type and content"
+        generates: ["src/tools/classification.py"]
+
+      - value: "key_value"
+        label: "Key-Value Pairs"
+        description: "Extract structured field data (forms, invoices)"
+        generates: ["src/tools/key_value.py"]
+
+      - value: "relationships"
+        label: "Relationships"
+        description: "Extract relationships between entities"
+        generates: ["src/tools/relationships.py"]
+
+      - value: "custom"
+        label: "Custom Schema"
+        description: "Define your own extraction schema"
+        generates: ["src/tools/custom.py"]
+        follow_up:
+          - id: "schema_definition"
+            question: "Describe the data you want to extract:"
+            type: "text"
+
+    default: ["entities", "summary"]
+    min_selections: 1
+
+  - id: "output_format"
+    question: "How should results be formatted?"
+    type: "single_choice"
+    options:
+      - value: "json"
+        label: "JSON"
+        description: "Structured JSON for programmatic consumption"
+        generates: ["src/output/json_formatter.py"]
+
+      - value: "markdown"
+        label: "Markdown"
+        description: "Human-readable markdown report"
+        generates: ["src/output/markdown_formatter.py"]
+
+      - value: "both"
+        label: "Both JSON and Markdown"
+        description: "Generate both formats"
+        generates:
+          - "src/output/json_formatter.py"
+          - "src/output/markdown_formatter.py"
+
+      - value: "custom"
+        label: "Custom Format"
+        description: "Define your own output format"
+        generates: ["src/output/custom_formatter.py"]
+
+    default: "json"
+
+  - id: "error_handling"
+    question: "How should extraction errors be handled?"
+    type: "single_choice"
+    options:
+      - value: "strict"
+        label: "Strict"
+        description: "Fail on any extraction error. For critical accuracy."
+
+      - value: "lenient"
+        label: "Lenient"
+        description: "Best effort extraction, flag uncertainties."
+
+      - value: "interactive"
+        label: "Interactive"
+        description: "Prompt for clarification on ambiguous cases."
+
+    default: "lenient"
+
+  - id: "confidence_scoring"
+    question: "Include confidence scores for extractions?"
+    type: "boolean"
+    description: "Adds confidence values (0-1) to extracted data."
+    default: true
+
+  - id: "domain"
+    question: "What domain are you processing documents for?"
+    type: "text"
+    optional: true
+    description: "Examples: legal, medical, financial, academic"
+    default: "general"
+    affects:
+      - "system_prompt_content"
+      - "tool_descriptions"
+
+validation:
+  - condition: "input_format contains 'image' && 'vision' not in user_skills"
+    error: "Image processing requires completing the Vision curriculum node first."
+
+  - condition: "processing_mode == 'single_pass' && document_length > 100000"
+    warning: "Single pass may fail for documents over 100K tokens. Consider chunked processing."
+
+  - condition: "extraction_types contains 'relationships' && extraction_types not contains 'entities'"
+    warning: "Relationship extraction typically requires entity extraction first."
+
+generation_summary: |
+  Based on your choices, the following will be generated:
+
+  **Core Files:**
+  - `src/processor.py` - Main processing logic
+  - `src/tools/__init__.py` - Tool registry
+
+  **Input Handlers:** {input_format}
+  **Processing Mode:** {processing_mode}
+  **Extraction Tools:** {extraction_types}
+  **Output Format:** {output_format}
+
+  Ready to generate?

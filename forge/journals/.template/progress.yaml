@@ -1,0 +1,133 @@
+# Your Learning Progress
+# Track your journey through the Claude App Forge curriculum
+
+version: "1.0"
+journal_created: "2024-12-26"
+last_updated: "2024-12-26"
+
+# Your information
+learner:
+  name: "Your Name"
+  github: ""  # Optional
+  goals:
+    - "Learn to build Claude-powered applications"
+    # Add your specific goals here
+
+# Your target blueprint (what do you want to build?)
+target_blueprint: null  # e.g., "conversational-assistant"
+target_description: ""  # Describe what you want to build
+
+# Curriculum progress
+# Status: not_started, in_progress, completed, skipped
+nodes:
+  # Fundamentals
+  sdk-setup:
+    status: "not_started"
+    started_at: null
+    completed_at: null
+    notes: ""
+
+  api-keys:
+    status: "not_started"
+    started_at: null
+    completed_at: null
+    notes: ""
+
+  first-message:
+    status: "not_started"
+    started_at: null
+    completed_at: null
+    notes: ""
+
+  model-selection:
+    status: "not_started"
+    started_at: null
+    completed_at: null
+    notes: ""
+
+  # Messaging
+  message-structure:
+    status: "not_started"
+    started_at: null
+    completed_at: null
+    notes: ""
+
+  system-prompts:
+    status: "not_started"
+    started_at: null
+    completed_at: null
+    notes: ""
+
+  streaming:
+    status: "not_started"
+    started_at: null
+    completed_at: null
+    notes: ""
+
+  multi-turn:
+    status: "not_started"
+    started_at: null
+    completed_at: null
+    notes: ""
+
+  context-management:
+    status: "not_started"
+    started_at: null
+    completed_at: null
+    notes: ""
+
+  # Tools
+  tool-basics:
+    status: "not_started"
+    started_at: null
+    completed_at: null
+    notes: ""
+
+  tool-execution:
+    status: "not_started"
+    started_at: null
+    completed_at: null
+    notes: ""
+
+  # Agents
+  agent-loop:
+    status: "not_started"
+    started_at: null
+    completed_at: null
+    notes: ""
+
+# Challenges completed
+challenges:
+  hello-claude:
+    status: "not_started"
+    completed_at: null
+    project_path: null  # Path to your implementation
+
+  research-assistant:
+    status: "not_started"
+    completed_at: null
+    project_path: null
+
+# Blueprints instantiated
+blueprints_completed: []
+# Example:
+# - blueprint: "conversational-assistant"
+#   project_name: "my-support-bot"
+#   completed_at: "2024-12-26"
+#   path: "projects/my-support-bot"
+
+# Publications
+publications: []
+# Example:
+# - name: "my-support-bot"
+#   target: "pypi"
+#   published_at: "2024-12-26"
+#   url: "https://pypi.org/project/my-support-bot"
+
+# Session log (Claude Code updates this)
+sessions: []
+# Example:
+# - date: "2024-12-26"
+#   duration_minutes: 45
+#   nodes_worked_on: ["streaming", "multi-turn"]
+#   notes: "Completed streaming module"

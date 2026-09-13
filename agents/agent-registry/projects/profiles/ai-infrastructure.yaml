@@ -1,0 +1,33 @@
+name: ai-infrastructure
+description: AI/ML infrastructure, APIs, and model integration
+
+agents:
+  # Core orchestration
+  - agent-orchestrator
+  
+  # API development
+  - fastapi-specialist
+  - api-routing-specialist
+  - api-integrator
+  
+  # ML infrastructure
+  - ml-pipeline-builder
+  - huggingface-specialist
+  - pytorch-specialist
+  
+  # Python specialists
+  - async-python-specialist
+  - python-web-generalist
+  
+  # Infrastructure
+  - container-optimizer
+  - ci-cd-orchestrator
+  - infrastructure-as-code-specialist
+  
+  # Monitoring & security
+  - observability-injector
+  - security-auditor
+
+domains: [backend, infrastructure, data-science]
+capabilities: [api-development, ml-ops, deployment, monitoring]
+tags: [python, fastapi, ml, docker, kubernetes]

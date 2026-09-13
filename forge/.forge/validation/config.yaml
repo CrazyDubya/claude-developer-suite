@@ -1,0 +1,126 @@
+# Validation Engine Configuration
+# Defines how content is validated against SDK versions
+
+version: "1.0"
+
+# Test runner configuration
+runner:
+  # Languages to validate
+  languages:
+    - python
+    - typescript
+
+  # SDK versions to test against
+  sdk_matrix:
+    python:
+      - "anthropic>=0.34.0"
+      - "anthropic>=0.33.0,<0.34.0"
+    typescript:
+      - "@anthropic-ai/sdk@^0.34.0"
+      - "@anthropic-ai/sdk@^0.33.0"
+
+  # Timeout for individual tests (seconds)
+  timeout: 30
+
+  # Retry configuration for flaky tests
+  retries: 2
+  retry_delay: 1
+
+# Content categories and their validation rules
+categories:
+  curriculum:
+    paths:
+      - "curriculum/nodes/**/*.py"
+      - "curriculum/nodes/**/*.ts"
+    validation_type: "example"
+    require_success: true
+
+  blueprints:
+    paths:
+      - "blueprints/**/examples/**"
+      - "blueprints/**/instantiation/**"
+    validation_type: "example"
+    require_success: true
+
+  reference:
+    paths:
+      - "reference/**/*.py"
+      - "reference/**/*.ts"
+    validation_type: "full"
+    require_success: true
+
+  challenges:
+    paths:
+      - "curriculum/challenges/**/solution/**"
+    validation_type: "example"
+    require_success: true
+
+# Validation types
+validation_types:
+  example:
+    description: "Validates that example code runs without errors"
+    checks:
+      - syntax
+      - imports
+      - execution
+
+  full:
+    description: "Full validation including output verification"
+    checks:
+      - syntax
+      - imports
+      - execution
+      - output_format
+      - assertions
+
+# Mock configuration for validation
+mocks:
+  # Use mock API responses for deterministic testing
+  use_mock_api: true
+  mock_responses_dir: ".forge/validation/mocks/"
+
+  # Real API tests (requires API key, runs separately)
+  real_api_tests:
+    enabled: false
+    schedule: "weekly"
+    api_key_env: "ANTHROPIC_API_KEY"
+
+# Reporting
+reporting:
+  output_dir: ".forge/validation/reports/"
+  formats:
+    - json
+    - markdown
+
+  # Badge generation for README
+  badges:
+    enabled: true
+    output_path: ".forge/validation/badges/"
+
+# CI/CD integration
+ci:
+  # Run on pull requests
+  on_pull_request: true
+
+  # Run on SDK release (webhook)
+  on_sdk_release: true
+
+  # Scheduled runs
+  schedule:
+    - cron: "0 0 * * *"  # Daily at midnight
+
+  # Notification on failure
+  notifications:
+    github_issues: true
+    slack_webhook: "${SLACK_WEBHOOK_URL}"
+
+# Content freshness tracking
+freshness:
+  # Maximum age before content is marked stale
+  max_age_days: 30
+
+  # Store validation history
+  history_retention_days: 90
+
+  # Update manifest after validation
+  update_manifest: true

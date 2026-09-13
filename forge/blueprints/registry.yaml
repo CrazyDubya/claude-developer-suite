@@ -1,0 +1,143 @@
+# Blueprint Registry
+# Index of all available app pattern blueprints
+
+version: "1.0"
+
+blueprints:
+  conversational-assistant:
+    name: "Conversational Assistant"
+    description: "Multi-turn dialogue agent with context management"
+    difficulty: beginner
+    category: conversational
+    status: stable
+
+    # Required curriculum nodes
+    required_skills:
+      - first-message
+      - streaming
+      - multi-turn
+      - system-prompts
+
+    # Recommended but optional
+    recommended_skills:
+      - context-management
+      - error-handling
+
+    # Use cases this blueprint addresses
+    use_cases:
+      - Customer support chatbot
+      - Personal assistant
+      - FAQ bot
+      - Interactive tutor
+
+    # Estimated implementation time
+    implementation_time: "2-4 hours"
+
+    # Path to blueprint
+    path: "./conversational-assistant/"
+
+  document-processor:
+    name: "Document Processor"
+    description: "Analyze, summarize, and transform documents"
+    difficulty: intermediate
+    category: analysis
+    status: stable
+
+    required_skills:
+      - first-message
+      - system-prompts
+      - tool-basics
+      - tool-execution
+
+    recommended_skills:
+      - vision
+      - streaming
+      - context-management
+
+    use_cases:
+      - Contract analyzer
+      - Research paper summarizer
+      - Invoice processor
+      - Legal document review
+
+    implementation_time: "4-8 hours"
+
+    path: "./document-processor/"
+
+  # Future blueprints (coming in later versions)
+  code-review-agent:
+    name: "Code Review Agent"
+    description: "Autonomous code review and improvement suggestions"
+    difficulty: advanced
+    category: development
+    status: planned
+    path: "./code-review-agent/"
+
+  research-synthesizer:
+    name: "Research Synthesizer"
+    description: "Multi-source research aggregation and synthesis"
+    difficulty: advanced
+    category: analysis
+    status: planned
+    path: "./research-synthesizer/"
+
+  creative-collaborator:
+    name: "Creative Collaborator"
+    description: "Collaborative writing and creative ideation"
+    difficulty: intermediate
+    category: creative
+    status: planned
+    path: "./creative-collaborator/"
+
+  multi-agent-orchestrator:
+    name: "Multi-Agent Orchestrator"
+    description: "Coordinate multiple specialized agents"
+    difficulty: expert
+    category: orchestration
+    status: planned
+    path: "./multi-agent-orchestrator/"
+
+# Blueprint categories
+categories:
+  conversational:
+    name: "Conversational"
+    description: "Interactive dialogue applications"
+    icon: "💬"
+
+  analysis:
+    name: "Analysis"
+    description: "Document and data analysis"
+    icon: "📊"
+
+  development:
+    name: "Development"
+    description: "Software development assistance"
+    icon: "💻"
+
+  creative:
+    name: "Creative"
+    description: "Creative and content generation"
+    icon: "🎨"
+
+  orchestration:
+    name: "Orchestration"
+    description: "Multi-agent coordination"
+    icon: "🎭"
+
+# Difficulty levels
+difficulty_levels:
+  beginner:
+    description: "Suitable for those new to Claude SDK"
+    expected_hours: "2-4"
+
+  intermediate:
+    description: "Requires familiarity with core SDK concepts"
+    expected_hours: "4-8"
+
+  advanced:
+    description: "Complex patterns and integrations"
+    expected_hours: "8-16"
+
+  expert:
+    description: "Cutting-edge patterns, production-grade"
+    expected_hours: "16+"

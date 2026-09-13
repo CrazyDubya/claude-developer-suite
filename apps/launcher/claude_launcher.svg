@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="256" fill="#5C3378" />
+  
+  <!-- Inner gradient -->
+  <circle cx="256" cy="256" r="220" fill="#7D4A9E" />
+  
+  <!-- Claude stylized "C" -->
+  <path d="M320 140C270 120 220 140 190 190C160 240 160 300 190 350C220 400 270 420 320 400" 
+        stroke="#FFFFFF" stroke-width="30" fill="none" stroke-linecap="round" />
+  
+  <!-- Server rack lines -->
+  <rect x="330" y="150" width="80" height="210" rx="5" ry="5" fill="#A169C2" />
+  
+  <!-- Server rack details -->
+  <rect x="340" y="170" width="60" height="15" rx="2" ry="2" fill="#FFFFFF" opacity="0.8" />
+  <rect x="340" y="200" width="60" height="15" rx="2" ry="2" fill="#FFFFFF" opacity="0.8" />
+  <rect x="340" y="230" width="60" height="15" rx="2" ry="2" fill="#FFFFFF" opacity="0.8" />
+  <rect x="340" y="260" width="60" height="15" rx="2" ry="2" fill="#FFFFFF" opacity="0.8" />
+  <rect x="340" y="290" width="60" height="15" rx="2" ry="2" fill="#FFFFFF" opacity="0.8" />
+  
+  <!-- Connection lines between Claude "C" and server rack -->
+  <path d="M300 200 L340 200" stroke="#FFFFFF" stroke-width="6" stroke-dasharray="5,5" />
+  <path d="M300 260 L340 260" stroke="#FFFFFF" stroke-width="6" stroke-dasharray="5,5" />
+  <path d="M300 290 L340 290" stroke="#FFFFFF" stroke-width="6" stroke-dasharray="5,5" />
+  
+  <!-- Power/launch button -->
+  <circle cx="256" cy="370" r="40" fill="#24C88F" />
+  <path d="M256 340 L256 380" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" />
+  <path d="M236 355 L276 355" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" />
+</svg>

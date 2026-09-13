@@ -1,0 +1,6 @@
+# Keep this directory for your project documentation
+# When you instantiate a blueprint, document it here:
+# - my-chatbot/
+#   - decisions.md (what choices you made)
+#   - learnings.md (what you learned)
+#   - next-steps.md (future improvements)

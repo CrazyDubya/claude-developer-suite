@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+*.egg-info/
+
+# Runtime data (lives in ~/.claude-bridge/, not in repo)
+*.db
+*.log
+*.pid
+heartbeat
+checkpoint.json
+
+# Secrets - NEVER commit these
+config.json
+.env
+*.env
+!config/env.example
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# ChromaDB data
+chroma_data/
+
+# Attachments and uploads
+attachments/
+
+# Dream journal
+dream_journal/
+
+# Backups
+backups/

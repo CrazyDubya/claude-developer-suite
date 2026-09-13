@@ -1,0 +1,68 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "{{package_name}}"
+version = "{{version}}"
+description = "{{description}}"
+readme = "README.md"
+license = {text = "{{license}}"}
+requires-python = ">=3.10"
+authors = [
+    {name = "{{author_name}}", email = "{{author_email}}"}
+]
+keywords = ["claude", "ai", "anthropic", "{{keywords}}"]
+classifiers = [
+    "Development Status :: {{dev_status}}",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: {{license_classifier}}",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "anthropic>=0.34.0",
+    {{#dependencies}}
+    "{{.}}",
+    {{/dependencies}}
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov",
+    "black",
+    "ruff",
+    "mypy",
+]
+
+[project.urls]
+Homepage = "{{homepage}}"
+Documentation = "{{documentation}}"
+Repository = "{{repository}}"
+
+{{#has_cli}}
+[project.scripts]
+{{cli_name}} = "{{package_module}}.cli:main"
+{{/has_cli}}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.black]
+line-length = 88
+target-version = ["py310", "py311", "py312"]
+
+[tool.ruff]
+line-length = 88
+select = ["E", "F", "I", "N", "W"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --cov={{package_module}}"

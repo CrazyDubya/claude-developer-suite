@@ -1,21 +1,32 @@
-# claude-skills
+# Claude Developer Suite
 
-Twelve Claude Code skills, plus a SQLite layer for tracking them.
+One monorepo for Claude/Claude-Code tooling — skills, agent management, a desktop MCP launcher, a local Artifact renderer, a Telegram bridge, and an app-building forge. Each component installs and runs independently; see `docs/ARCHITECTURE.md` for how they compose.
 
-## The skills
+## Layout
 
-Each is a directory containing a `SKILL.md`, and where useful `reference/`, `templates/` and `scripts/`. Twelve `SKILL.md` files are present. Among them: `accessibility-auditor`, `api-documentation-generator`, `code-style-enforcer`, `configuration-validator`, `database-migration-helper`, `dependency-audit-assistant`, `docker-optimizer`, `error-tracking-integrator`, `git-workflow-enforcer`, `internationalization-helper`, `performance-profiler`.
+| Path | What | Source |
+|---|---|---|
+| `skills/` | 12 Claude Code skills + SQLite tracking layer | claude-skills |
+| `agents/` | Claude Agent Manager (shadow-directory agent registry) | Claude-dynamic-agents |
+| `apps/launcher/` | macOS app to manage/launch Claude Desktop w/ MCP configs | claude-mcp-launcher |
+| `apps/artifacts/` | Local Artifact renderer w/ security validation (`npm install` first) | Claude-Artifacts |
+| `bridges/telegram/` | Telegram bridge to a Claude Code instance | SpreadtheEcho |
+| `forge/` | Version-controlled app-building apprenticeship system | ClaudeApp |
+| `docs/` | Provenance table + architecture notes | — |
 
-`database-migration-helper` ships templates for Alembic, Knex, Prisma, Rails, Sequelize and TypeORM. `docker-optimizer` ships an optimized Dockerfile and a `.dockerignore`. `dependency-audit-assistant` includes a license-checking script and vulnerability and license references.
+## Install
 
-## The database
+Per-component — there is no single root requirements file by design:
 
-Per `DATABASE_README.md`:
+```bash
+pip install -r requirements/skills.txt      # light
+pip install -r requirements/agents.txt
+pip install -r requirements/launcher.txt    # macOS only
+pip install -r requirements/telegram.txt    # heavy: chromadb, sentence-transformers
+pip install -r requirements/forge.txt
+cd apps/artifacts/app-analyzer && npm install
+```
 
-- `scripts/init_db.py` scans `~/.claude/skills/` and populates `data/skills_metadata.db` with metadata, templates, scripts and references.
-- `scripts/skill_dashboard.py` reads it back, interactively or as quick views.
-- `lib/skill_db.py` is the access layer; `data/schema.sql` the schema.
+## Provenance
 
-## Installing
-
-Copy the skill directories into `~/.claude/skills/`, then run `python3 scripts/init_db.py`.
+Clean-copy consolidation from six repos (histories 1–10 commits; subtree added nothing). Full source→destination mapping in `docs/PROVENANCE.md`. Source repos were archived, never deleted.

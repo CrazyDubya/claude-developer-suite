@@ -1,0 +1,352 @@
+# Claude App Forge Curriculum Graph
+# This defines the skill nodes and their dependencies
+
+version: "1.0"
+description: |
+  The curriculum is a directed acyclic graph of skill nodes.
+  Each node represents a capability developers can acquire.
+  Multiple valid paths exist depending on learning goals.
+
+# Node categories organize skills by domain
+categories:
+  fundamentals:
+    name: "Fundamentals"
+    description: "Core SDK concepts every developer needs"
+    color: "#3B82F6"
+
+  messaging:
+    name: "Messaging"
+    description: "Message handling and conversation patterns"
+    color: "#10B981"
+
+  tools:
+    name: "Tools"
+    description: "Tool definition and function calling"
+    color: "#F59E0B"
+
+  agents:
+    name: "Agents"
+    description: "Autonomous agent patterns"
+    color: "#8B5CF6"
+
+  abstraction:
+    name: "Agent Abstraction Layer"
+    description: "The programmable layer for stochastic, fallible, unintelligible entities"
+    color: "#EC4899"
+
+  advanced:
+    name: "Advanced"
+    description: "Production patterns and optimization"
+    color: "#EF4444"
+
+# Skill nodes with dependencies
+nodes:
+  # === FUNDAMENTALS ===
+  sdk-setup:
+    category: fundamentals
+    name: "SDK Setup"
+    description: "Install and configure the Claude SDK"
+    prerequisites: []
+    estimated_time: "15 min"
+    difficulty: 1
+
+  api-keys:
+    category: fundamentals
+    name: "API Key Management"
+    description: "Secure API key handling and environment configuration"
+    prerequisites: [sdk-setup]
+    estimated_time: "20 min"
+    difficulty: 1
+
+  first-message:
+    category: fundamentals
+    name: "Your First Message"
+    description: "Send a message and receive a response"
+    prerequisites: [api-keys]
+    estimated_time: "15 min"
+    difficulty: 1
+
+  model-selection:
+    category: fundamentals
+    name: "Model Selection"
+    description: "Choose the right Claude model for your use case"
+    prerequisites: [first-message]
+    estimated_time: "30 min"
+    difficulty: 2
+
+  # === MESSAGING ===
+  message-structure:
+    category: messaging
+    name: "Message Structure"
+    description: "Understand message roles, content types, and formatting"
+    prerequisites: [first-message]
+    estimated_time: "25 min"
+    difficulty: 2
+
+  system-prompts:
+    category: messaging
+    name: "System Prompts"
+    description: "Design effective system prompts for your app"
+    prerequisites: [message-structure]
+    estimated_time: "45 min"
+    difficulty: 2
+
+  streaming:
+    category: messaging
+    name: "Streaming Responses"
+    description: "Handle streaming for real-time output"
+    prerequisites: [message-structure]
+    estimated_time: "30 min"
+    difficulty: 2
+
+  multi-turn:
+    category: messaging
+    name: "Multi-turn Conversations"
+    description: "Maintain conversation context across turns"
+    prerequisites: [message-structure]
+    estimated_time: "40 min"
+    difficulty: 3
+
+  context-management:
+    category: messaging
+    name: "Context Window Management"
+    description: "Optimize token usage and handle long conversations"
+    prerequisites: [multi-turn]
+    estimated_time: "60 min"
+    difficulty: 4
+
+  vision:
+    category: messaging
+    name: "Vision Capabilities"
+    description: "Process images and visual content"
+    prerequisites: [message-structure]
+    estimated_time: "35 min"
+    difficulty: 2
+
+  # === TOOLS ===
+  tool-basics:
+    category: tools
+    name: "Tool Basics"
+    description: "Define and register tools for Claude to use"
+    prerequisites: [message-structure]
+    estimated_time: "45 min"
+    difficulty: 3
+
+  tool-schemas:
+    category: tools
+    name: "Tool Schemas"
+    description: "Design robust tool input schemas with validation"
+    prerequisites: [tool-basics]
+    estimated_time: "40 min"
+    difficulty: 3
+
+  tool-execution:
+    category: tools
+    name: "Tool Execution"
+    description: "Execute tools and handle results safely"
+    prerequisites: [tool-basics]
+    estimated_time: "50 min"
+    difficulty: 3
+
+  multi-tool:
+    category: tools
+    name: "Multi-tool Workflows"
+    description: "Orchestrate multiple tools in a single interaction"
+    prerequisites: [tool-execution]
+    estimated_time: "60 min"
+    difficulty: 4
+
+  tool-error-handling:
+    category: tools
+    name: "Tool Error Handling"
+    description: "Graceful error handling and recovery for tools"
+    prerequisites: [tool-execution]
+    estimated_time: "45 min"
+    difficulty: 4
+
+  # === AGENTS ===
+  agent-loop:
+    category: agents
+    name: "Agent Loop Pattern"
+    description: "Build autonomous agents that iterate until complete"
+    prerequisites: [multi-tool, multi-turn]
+    estimated_time: "90 min"
+    difficulty: 4
+
+  agent-state:
+    category: agents
+    name: "Agent State Management"
+    description: "Maintain and persist agent state across executions"
+    prerequisites: [agent-loop]
+    estimated_time: "60 min"
+    difficulty: 4
+
+  agent-planning:
+    category: agents
+    name: "Agent Planning"
+    description: "Implement planning and task decomposition"
+    prerequisites: [agent-loop]
+    estimated_time: "75 min"
+    difficulty: 5
+
+  multi-agent:
+    category: agents
+    name: "Multi-Agent Systems"
+    description: "Coordinate multiple agents for complex tasks"
+    prerequisites: [agent-state, agent-planning]
+    estimated_time: "120 min"
+    difficulty: 5
+
+  # === AGENT ABSTRACTION LAYER ===
+  # The new programmable layer for AI entities
+  aal-primitives:
+    category: abstraction
+    name: "AAL Primitives"
+    description: "Core abstractions: AgentEntity, Context, Permissions, Memory"
+    prerequisites: [agent-loop]
+    estimated_time: "60 min"
+    difficulty: 4
+
+  aal-uncertainty:
+    category: abstraction
+    name: "Uncertainty Management"
+    description: "Handle stochasticity with confidence scores and multi-path exploration"
+    prerequisites: [aal-primitives]
+    estimated_time: "75 min"
+    difficulty: 5
+
+  aal-fallibility:
+    category: abstraction
+    name: "Fallibility Handling"
+    description: "Error classification, recovery strategies, graceful degradation"
+    prerequisites: [aal-primitives, error-handling]
+    estimated_time: "60 min"
+    difficulty: 4
+
+  aal-observability:
+    category: abstraction
+    name: "Agent Observability"
+    description: "Tracing, decision logging, behavioral fingerprinting, drift detection"
+    prerequisites: [aal-primitives, monitoring]
+    estimated_time: "75 min"
+    difficulty: 5
+
+  aal-manifest:
+    category: abstraction
+    name: "Agent Manifests"
+    description: "Unified specification for agent identity, permissions, tools, and behavior"
+    prerequisites: [aal-primitives]
+    estimated_time: "45 min"
+    difficulty: 4
+
+  aal-runtime:
+    category: abstraction
+    name: "Agent Runtime"
+    description: "Complete runtime orchestrating all AAL components"
+    prerequisites: [aal-uncertainty, aal-fallibility, aal-observability, aal-manifest]
+    estimated_time: "90 min"
+    difficulty: 5
+
+  aal-integrations:
+    category: abstraction
+    name: "AAL Integrations"
+    description: "MCP, LSP, IDE integrations, hooks, and workflows"
+    prerequisites: [aal-runtime]
+    estimated_time: "120 min"
+    difficulty: 5
+
+  # === ADVANCED ===
+  error-handling:
+    category: advanced
+    name: "Production Error Handling"
+    description: "Comprehensive error handling for production apps"
+    prerequisites: [streaming, tool-error-handling]
+    estimated_time: "60 min"
+    difficulty: 4
+
+  rate-limiting:
+    category: advanced
+    name: "Rate Limiting & Retries"
+    description: "Handle rate limits and implement retry strategies"
+    prerequisites: [error-handling]
+    estimated_time: "45 min"
+    difficulty: 4
+
+  caching:
+    category: advanced
+    name: "Response Caching"
+    description: "Implement prompt caching for efficiency"
+    prerequisites: [context-management]
+    estimated_time: "50 min"
+    difficulty: 4
+
+  monitoring:
+    category: advanced
+    name: "Observability & Monitoring"
+    description: "Add logging, metrics, and tracing"
+    prerequisites: [error-handling]
+    estimated_time: "60 min"
+    difficulty: 4
+
+  security:
+    category: advanced
+    name: "Security Best Practices"
+    description: "Secure your Claude-powered application"
+    prerequisites: [tool-execution]
+    estimated_time: "75 min"
+    difficulty: 4
+
+  testing:
+    category: advanced
+    name: "Testing Claude Apps"
+    description: "Unit, integration, and evaluation testing"
+    prerequisites: [first-message]
+    estimated_time: "90 min"
+    difficulty: 3
+
+# Challenge projects unlock after completing skill clusters
+challenges:
+  hello-claude:
+    name: "Hello Claude"
+    description: "Build a simple command-line chatbot"
+    required_nodes: [first-message, streaming]
+    optional_nodes: [system-prompts]
+    difficulty: 1
+
+  research-assistant:
+    name: "Research Assistant"
+    description: "Build a tool-using research assistant"
+    required_nodes: [multi-turn, tool-basics, tool-execution]
+    optional_nodes: [context-management, multi-tool]
+    difficulty: 3
+
+  document-analyzer:
+    name: "Document Analyzer"
+    description: "Build a document analysis pipeline"
+    required_nodes: [system-prompts, vision, tool-execution]
+    optional_nodes: [streaming, context-management]
+    difficulty: 3
+
+  autonomous-agent:
+    name: "Autonomous Agent"
+    description: "Build a fully autonomous task-completing agent"
+    required_nodes: [agent-loop, agent-state, agent-planning]
+    optional_nodes: [multi-agent, monitoring]
+    difficulty: 5
+
+  production-agent:
+    name: "Production Agent"
+    description: "Build a production-ready agent with full AAL integration"
+    required_nodes: [aal-runtime, aal-integrations]
+    optional_nodes: [multi-agent]
+    difficulty: 5
+
+# Blueprint prerequisites - which nodes are needed for each blueprint
+blueprint_requirements:
+  conversational-assistant:
+    required: [first-message, streaming, multi-turn, system-prompts]
+    recommended: [context-management, error-handling]
+
+  document-processor:
+    required: [first-message, system-prompts, tool-basics, tool-execution]
+    recommended: [vision, streaming, context-management]

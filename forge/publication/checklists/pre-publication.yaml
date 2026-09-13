@@ -1,0 +1,140 @@
+# Pre-Publication Checklist
+# Run through this checklist before publishing any package
+
+version: "1.0"
+
+checklist:
+  security:
+    name: "Security Review"
+    items:
+      - id: "no_secrets"
+        description: "No API keys, passwords, or secrets in code"
+        severity: "critical"
+        auto_check: true
+        check_command: "grep -r 'sk-ant-\\|ANTHROPIC_API_KEY=' --include='*.py' --include='*.ts' --include='*.js'"
+        expect: "no_match"
+
+      - id: "no_hardcoded_urls"
+        description: "No hardcoded internal/development URLs"
+        severity: "high"
+        auto_check: true
+        check_command: "grep -r 'localhost\\|127.0.0.1\\|0.0.0.0' --include='*.py' --include='*.ts'"
+        expect: "no_match_or_justified"
+
+      - id: "dependency_audit"
+        description: "No known vulnerabilities in dependencies"
+        severity: "high"
+        auto_check: true
+        check_command: "npm audit || pip-audit"
+
+      - id: "input_validation"
+        description: "User input is validated and sanitized"
+        severity: "high"
+        manual: true
+
+  documentation:
+    name: "Documentation"
+    items:
+      - id: "readme_exists"
+        description: "README.md exists and is complete"
+        severity: "critical"
+        auto_check: true
+
+      - id: "readme_sections"
+        description: "README includes: description, installation, usage, examples"
+        severity: "high"
+        manual: true
+
+      - id: "api_documented"
+        description: "Public API is documented"
+        severity: "medium"
+        manual: true
+
+      - id: "changelog_updated"
+        description: "CHANGELOG.md is up to date"
+        severity: "medium"
+        auto_check: true
+
+  legal:
+    name: "Legal & Licensing"
+    items:
+      - id: "license_exists"
+        description: "LICENSE file exists"
+        severity: "critical"
+        auto_check: true
+
+      - id: "license_compatible"
+        description: "All dependencies have compatible licenses"
+        severity: "high"
+        manual: true
+
+      - id: "attribution"
+        description: "Required attributions are included"
+        severity: "medium"
+        manual: true
+
+  quality:
+    name: "Code Quality"
+    items:
+      - id: "tests_pass"
+        description: "All tests pass"
+        severity: "critical"
+        auto_check: true
+        check_command: "npm test || pytest"
+
+      - id: "test_coverage"
+        description: "Test coverage is acceptable (>70%)"
+        severity: "medium"
+        auto_check: true
+
+      - id: "linting_passes"
+        description: "Code passes linting"
+        severity: "medium"
+        auto_check: true
+
+      - id: "type_check"
+        description: "Type checking passes (if applicable)"
+        severity: "medium"
+        auto_check: true
+
+  packaging:
+    name: "Package Configuration"
+    items:
+      - id: "version_bumped"
+        description: "Version number is updated"
+        severity: "critical"
+        manual: true
+
+      - id: "package_json_complete"
+        description: "package.json/setup.py has all required fields"
+        severity: "high"
+        auto_check: true
+
+      - id: "files_included"
+        description: "All necessary files are included in package"
+        severity: "high"
+        manual: true
+
+      - id: "files_excluded"
+        description: "Unnecessary files are excluded (.git, tests, docs)"
+        severity: "medium"
+        manual: true
+
+# Severity definitions
+severities:
+  critical:
+    description: "Must fix before publication"
+    blocks_publication: true
+
+  high:
+    description: "Should fix before publication"
+    blocks_publication: false
+    requires_justification: true
+
+  medium:
+    description: "Consider fixing"
+    blocks_publication: false
+
+  low:
+    description: "Nice to have"
+    blocks_publication: false

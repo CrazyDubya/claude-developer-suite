@@ -1,0 +1,6 @@
+# launcher: macOS desktop app (tkinter stdlib)
+
+# --- from source repo requirements.txt ---
+PyQt5>=5.15.0
+requests>=2.25.0
+psutil

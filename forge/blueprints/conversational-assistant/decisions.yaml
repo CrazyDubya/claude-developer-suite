@@ -1,0 +1,181 @@
+# Decision Points for Conversational Assistant Blueprint
+# Claude Code walks through these when instantiating
+
+version: "1.0"
+blueprint_id: "conversational-assistant"
+
+# Decision flow
+decisions:
+  - id: "interface_type"
+    question: "What type of interface will your assistant use?"
+    type: "single_choice"
+    options:
+      - value: "cli"
+        label: "Command Line Interface"
+        description: "Simple terminal-based chat. Good for prototypes and developer tools."
+        generates:
+          - "src/cli.py"
+          - "src/terminal_ui.py"
+
+      - value: "web_api"
+        label: "Web API (REST)"
+        description: "HTTP API with endpoints. Good for web apps and integrations."
+        generates:
+          - "src/api.py"
+          - "src/routes.py"
+        dependencies:
+          - "fastapi"
+          - "uvicorn"
+
+      - value: "web_socket"
+        label: "WebSocket"
+        description: "Real-time bidirectional. Good for interactive web chat."
+        generates:
+          - "src/websocket.py"
+          - "src/connection_manager.py"
+        dependencies:
+          - "fastapi"
+          - "websockets"
+
+    default: "cli"
+
+  - id: "persistence"
+    question: "How should conversations be persisted?"
+    type: "single_choice"
+    options:
+      - value: "memory"
+        label: "In-Memory Only"
+        description: "Conversations lost on restart. Simplest option."
+        generates: []
+
+      - value: "file"
+        label: "File-Based"
+        description: "JSON files on disk. Good for single-user or local apps."
+        generates:
+          - "src/storage/file_store.py"
+
+      - value: "sqlite"
+        label: "SQLite Database"
+        description: "Local database. Good for single-server deployments."
+        generates:
+          - "src/storage/sqlite_store.py"
+          - "src/storage/models.py"
+        dependencies:
+          - "sqlalchemy"
+
+      - value: "postgres"
+        label: "PostgreSQL"
+        description: "Production database. Good for scalable deployments."
+        generates:
+          - "src/storage/postgres_store.py"
+          - "src/storage/models.py"
+        dependencies:
+          - "sqlalchemy"
+          - "psycopg2-binary"
+
+    default: "memory"
+
+  - id: "context_strategy"
+    question: "How should the assistant handle long conversations?"
+    type: "single_choice"
+    options:
+      - value: "full"
+        label: "Keep Full History"
+        description: "Send all messages. May hit token limits on long conversations."
+
+      - value: "sliding"
+        label: "Sliding Window"
+        description: "Keep last N messages. Balances context and cost."
+        follow_up:
+          - id: "window_size"
+            question: "How many messages to keep?"
+            type: "number"
+            default: 20
+            min: 5
+            max: 100
+
+      - value: "summary"
+        label: "Summarize Old Messages"
+        description: "Periodically summarize older messages. Best for very long conversations."
+        follow_up:
+          - id: "summary_threshold"
+            question: "Summarize after how many messages?"
+            type: "number"
+            default: 30
+            min: 10
+            max: 100
+
+    default: "sliding"
+
+  - id: "streaming"
+    question: "Should responses stream in real-time?"
+    type: "boolean"
+    description: "Streaming shows text as it's generated. Better UX for chat."
+    default: true
+
+  - id: "system_prompt_source"
+    question: "How will the system prompt be provided?"
+    type: "single_choice"
+    options:
+      - value: "static_file"
+        label: "Static File"
+        description: "Load from a text file. Easy to edit without code changes."
+        generates:
+          - "prompts/system.txt"
+
+      - value: "config"
+        label: "Configuration"
+        description: "Part of the config file. Good for environment-specific prompts."
+
+      - value: "dynamic"
+        label: "Dynamic/Templated"
+        description: "Generate based on context. Good for personalization."
+        generates:
+          - "src/prompt_builder.py"
+
+    default: "static_file"
+
+  - id: "domain"
+    question: "What domain is this assistant for? (optional)"
+    type: "text"
+    description: "Examples: customer support, coding help, tutoring, general"
+    optional: true
+    default: "general assistant"
+    affects:
+      - "system_prompt_content"
+      - "example_conversations"
+
+  - id: "assistant_name"
+    question: "What should the assistant be called?"
+    type: "text"
+    default: "Assistant"
+    affects:
+      - "system_prompt_content"
+      - "ui_labels"
+
+# Post-decision validation
+validation:
+  - condition: "interface_type == 'web_socket' && streaming == false"
+    warning: "WebSocket interfaces typically use streaming. Consider enabling it."
+
+  - condition: "persistence == 'postgres' && interface_type == 'cli'"
+    warning: "PostgreSQL may be overkill for a CLI tool. Consider SQLite or file-based."
+
+  - condition: "context_strategy == 'full' && no token limit awareness"
+    warning: "Full history may hit token limits. Consider adding limit detection."
+
+# Generation summary
+generation_summary: |
+  Based on your choices, the following will be generated:
+
+  **Core Files:**
+  - `src/assistant.py` - Main assistant logic
+  - `src/conversation.py` - Conversation management
+  - `src/config.py` - Configuration handling
+
+  **Interface:** {interface_type}
+  **Persistence:** {persistence}
+  **Context Strategy:** {context_strategy}
+  **Streaming:** {streaming}
+
+  Ready to generate?

@@ -1,0 +1,12 @@
+{
+  "telegram_bot_token": "YOUR_BOT_TOKEN_HERE",
+  "allowed_chat_id": "YOUR_CHAT_ID_HERE",
+  "claude_path": "claude",
+  "max_context_items": 15,
+  "max_context_chars": 8000,
+  "message_timeout": 600,
+  "retry_attempts": 3,
+  "health_check_interval": 60,
+  "enable_attachments": true,
+  "max_attachment_size": 20971520
+}

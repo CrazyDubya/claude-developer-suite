@@ -1,20 +1,8 @@
-# Skills Repository - Exclude temp and cache files
-
-# Temporary files
-*.tmp
-*.swp
-*.swo
-*~
-
-# Cache files
+node_modules/
 __pycache__/
 *.pyc
-.cache/
-
-# OS files
 .DS_Store
-Thumbs.db
-
-# Editor files
-.vscode/
-.idea/
+.env
+*.egg-info/
+build/
+dist/

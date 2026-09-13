@@ -1,0 +1,5 @@
+# Ignore all journals except the template
+*
+!.gitignore
+!.template
+!.template/**

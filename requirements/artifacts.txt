@@ -1,0 +1,1 @@
+# artifacts renderer: JS deps via npm; Python test_suite.py uses stdlib

@@ -1,0 +1,30 @@
+name: data-science
+description: Data science workflow with Python, analysis, and visualization
+
+agents:
+  # Core orchestration
+  - agent-orchestrator
+  - python-data-scientist
+  
+  # Data manipulation & analysis
+  - pandas-specialist
+  - numpy-scipy-specialist
+  - scikit-learn-specialist
+  
+  # Machine learning
+  - pytorch-specialist
+  - tensorflow-specialist
+  - machine-learning-theorist
+  
+  # Visualization
+  - plotly-specialist
+  - matplotlib-seaborn-specialist
+  
+  # Development support
+  - python-testing-specialist
+  - jupyter-specialist
+  - documentation-generator
+
+domains: [data-science]
+capabilities: [analysis, visualization, machine-learning]
+tags: [python, jupyter, ml, statistics]

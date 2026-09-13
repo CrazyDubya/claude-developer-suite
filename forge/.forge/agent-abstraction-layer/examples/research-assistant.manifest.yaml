@@ -1,0 +1,269 @@
+# Example Agent Manifest: Research Assistant
+# This demonstrates the full AAL specification for a research agent.
+
+apiVersion: aal/v1
+kind: AgentManifest
+
+metadata:
+  id: research-assistant
+  version: 1.0.0
+  name: Research Assistant
+  description: |
+    An agent specialized in research tasks. Demonstrates the four properties
+    of AI entities: stochastic (explores multiple paths), fallible (has recovery),
+    unintelligible (heavily instrumented), and changing (versioned with drift detection).
+  labels:
+    category: research
+    difficulty: intermediate
+  annotations:
+    author: Claude App Forge
+    created: "2025-01-01"
+
+spec:
+  # === ENTITY ===
+  # The fundamental unit - identity and behavioral expectations
+  entity:
+    model: claude-opus-4-5-20251101
+    fingerprint:
+      behavioral_hash: sha256:pending  # Will be computed after baseline
+    confidence_threshold: 0.7
+    fallback_agent: research-assistant-v0.9
+    max_concurrent: 5
+
+  # === CONTEXT ===
+  # What the agent knows and operates within
+  context:
+    system_prompt: |
+      You are a research assistant specialized in helping users find,
+      analyze, and synthesize information. You approach every query
+      methodically:
+
+      1. Clarify the research question
+      2. Identify relevant sources
+      3. Extract key information
+      4. Synthesize findings
+      5. Present conclusions with confidence levels
+
+      Always indicate your confidence in findings and note any
+      limitations or gaps in your research.
+
+    history_strategy: sliding_window
+    max_messages: 50
+
+    memory:
+      episodic: true
+      semantic: true
+      retention_days: 30
+
+  # === PERMISSIONS ===
+  # Security boundaries
+  permissions:
+    tools:
+      allowed:
+        - web_search
+        - read_file
+        - write_file
+        - summarize
+      denied:
+        - execute_code
+        - delete_file
+      require_approval:
+        - send_email
+        - post_to_api
+
+    resources:
+      max_tokens_per_turn: 8192
+      max_tool_calls_per_turn: 10
+      max_cost_per_session_usd: 2.00
+
+    scope:
+      allowed_directories:
+        - /workspace
+        - /tmp/research
+      allowed_domains:
+        - "*.edu"
+        - "*.gov"
+        - "*.org"
+        - "arxiv.org"
+        - "github.com"
+      denied_patterns:
+        - "*.env"
+        - "credentials.*"
+        - "*.key"
+
+  # === TOOLS ===
+  # Available tools with uncertainty metadata
+  tools:
+    - name: web_search
+      description: Search the web for information on a topic
+      input_schema:
+        type: object
+        properties:
+          query:
+            type: string
+            description: The search query
+          max_results:
+            type: integer
+            default: 10
+        required:
+          - query
+      execution:
+        timeout_ms: 15000
+        retries: 3
+      uncertainty:
+        reliability_score: 0.85
+        verification_required: false
+
+    - name: read_file
+      description: Read content from a file
+      input_schema:
+        type: object
+        properties:
+          path:
+            type: string
+            description: Path to the file
+        required:
+          - path
+      execution:
+        timeout_ms: 5000
+        retries: 1
+      uncertainty:
+        reliability_score: 0.99
+
+    - name: summarize
+      description: Create a summary of provided text
+      input_schema:
+        type: object
+        properties:
+          text:
+            type: string
+            description: Text to summarize
+          max_length:
+            type: integer
+            default: 500
+        required:
+          - text
+      execution:
+        timeout_ms: 10000
+        retries: 2
+      uncertainty:
+        reliability_score: 0.9
+
+  # === SKILLS ===
+  # Higher-level capabilities composed from tools
+  skills:
+    - id: literature-review
+      name: Literature Review
+      description: Conduct a literature review on a topic
+      prompt_template: skills/literature_review.md
+      requires_tools:
+        - web_search
+        - summarize
+      invocation:
+        slash_command: /review
+        mcp_endpoint: skills/literature-review
+
+    - id: fact-check
+      name: Fact Check
+      description: Verify claims against reliable sources
+      prompt_template: skills/fact_check.md
+      requires_tools:
+        - web_search
+      invocation:
+        slash_command: /factcheck
+
+  # === HOOKS ===
+  # Lifecycle intervention points
+  hooks:
+    pre_input:
+      - name: sanitize_query
+        handler: hooks/sanitize.py:sanitize_research_query
+        on_fail: log
+
+    pre_output:
+      - name: add_confidence_markers
+        handler: hooks/confidence.py:add_markers
+        on_fail: log
+
+      - name: check_source_quality
+        handler: hooks/sources.py:validate_sources
+        on_fail: block_and_log
+
+    post_tool:
+      - name: audit_search
+        handler: hooks/audit.py:log_search_query
+        timeout_ms: 1000
+
+    on_error:
+      - name: research_recovery
+        handler: hooks/recovery.py:attempt_alternative_sources
+        on_fail: log
+
+    on_low_confidence:
+      - name: request_clarification
+        handler: hooks/clarify.py:ask_for_more_context
+        on_fail: log
+
+  # === MODES ===
+  # Behavioral configurations
+  modes:
+    default:
+      temperature: 0.7
+      max_tokens: 4096
+      tools_enabled: true
+      streaming: true
+
+    thorough:
+      temperature: 0.3
+      max_tokens: 8192
+      tools_enabled: true
+      require_confirmation: false
+      streaming: false
+
+    quick:
+      temperature: 0.9
+      max_tokens: 2048
+      tools_enabled: true
+      streaming: true
+
+    careful:
+      temperature: 0.2
+      max_tokens: 4096
+      tools_enabled: true
+      require_confirmation: true
+      streaming: false
+
+  # === UNCERTAINTY ===
+  # How to handle stochasticity
+  uncertainty:
+    confidence_threshold: 0.7
+    exploration_strategy: beam_search
+    beam_width: 3
+    prune_threshold: 0.3
+    fallback_agent: research-assistant-v0.9
+
+  # === OBSERVABILITY ===
+  # Instrumentation for unintelligible entities
+  observability:
+    tracing: true
+    decision_logging: true
+    fingerprinting: true
+    drift_threshold: 0.1
+    export_format: jsonl
+    export_path: traces/research-assistant/
+
+  # === INTEGRATIONS ===
+  # External system connections
+  integrations:
+    mcp:
+      enabled: true
+      servers:
+        - filesystem
+        - web-search
+        - memory
+
+    lsp:
+      enabled: false
+
+    ide:
+      vscode_extension: research-assistant-vscode
