@@ -216,27 +216,39 @@ def populate_skills(conn):
             cursor.execute('''
                 INSERT INTO skill_templates
                 (skill_name, template_name, template_path, framework)
-                VALUES (?, ?, ?, ?)
-            ''', (skill_name, template['name'], template['path'], template['framework']))
-            templates_count += 1
+                SELECT ?, ?, ?, ?
+                WHERE NOT EXISTS (
+                    SELECT 1 FROM skill_templates
+                    WHERE skill_name = ? AND template_path = ?
+                )
+            ''', (skill_name, template['name'], template['path'], template['framework'], skill_name, template['path']))
+            templates_count += cursor.rowcount
 
         # Insert scripts
         for script in scripts:
             cursor.execute('''
                 INSERT INTO skill_scripts
                 (skill_name, script_name, script_path, is_executable)
-                VALUES (?, ?, ?, ?)
-            ''', (skill_name, script['name'], script['path'], script['executable']))
-            scripts_count += 1
+                SELECT ?, ?, ?, ?
+                WHERE NOT EXISTS (
+                    SELECT 1 FROM skill_scripts
+                    WHERE skill_name = ? AND script_path = ?
+                )
+            ''', (skill_name, script['name'], script['path'], script['executable'], skill_name, script['path']))
+            scripts_count += cursor.rowcount
 
         # Insert references
         for reference in references:
             cursor.execute('''
                 INSERT INTO skill_references
                 (skill_name, reference_name, reference_path)
-                VALUES (?, ?, ?)
-            ''', (skill_name, reference['name'], reference['path']))
-            references_count += 1
+                SELECT ?, ?, ?
+                WHERE NOT EXISTS (
+                    SELECT 1 FROM skill_references
+                    WHERE skill_name = ? AND reference_path = ?
+                )
+            ''', (skill_name, reference['name'], reference['path'], skill_name, reference['path']))
+            references_count += cursor.rowcount
 
     conn.commit()
 
