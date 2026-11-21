@@ -207,22 +207,22 @@ cmd_search() {
         esac
     done
     
-    # Execute search
-    python3 -c "
+    # Pass search inputs as data, never interpolate them into Python source.
+    python3 - "$AGENT_REGISTRY_PATH" "$search_query" "$domains" "$capabilities" "${limit:-20}" <<'PYSEARCH'
 import sys
-sys.path.append(\"$AGENT_REGISTRY_PATH\")
+sys.path.append(sys.argv[1])
 from setup import AgentRegistry
 
 registry = AgentRegistry()
-domains = ['$domains'] if '$domains' else None
-capabilities = ['$capabilities'] if '$capabilities' else None
-query = '$search_query'.strip() if '$search_query'.strip() else None
+domains = [sys.argv[3]] if sys.argv[3] else None
+capabilities = [sys.argv[4]] if sys.argv[4] else None
+query = sys.argv[2].strip() or None
 
 agents = registry.search_agents(
     query=query,
     domains=domains,
     capabilities=capabilities,
-    limit=int('${limit:-20}')
+    limit=int(sys.argv[5])
 )
 
 if not agents:
@@ -231,12 +231,12 @@ else:
     print(f'🔍 Found {len(agents)} agents:')
     print()
     for agent in agents:
-        print(f'📍 {agent[\"name\"]}')
-        print(f'   {agent[\"description\"][:100]}...')
-        print(f'   Domains: {', '.join(agent[\"domains\"])}')
-        print(f'   Capabilities: {', '.join(agent[\"capabilities\"])}')
+        print(f'📍 {agent["name"]}')
+        print(f'   {agent["description"][:100]}...')
+        print(f'   Domains: {', '.join(agent["domains"])}')
+        print(f'   Capabilities: {', '.join(agent["capabilities"])}')
         print()
-"
+PYSEARCH
 }
 
 # Manage agent profiles
