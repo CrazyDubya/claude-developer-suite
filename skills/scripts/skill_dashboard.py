@@ -156,7 +156,9 @@ def show_skill_details(db, skill_name):
     if stats:
         print("Usage Statistics:")
         print(f"  Total Executions: {stats['total_executions']}")
-        print(f"  Avg Duration: {stats['avg_duration_ms']:.0f}ms")
+        duration = stats['avg_duration_ms']
+        duration_text = "N/A" if duration is None else f"{duration:.0f}ms"
+        print(f"  Avg Duration: {duration_text}")
         print(f"  Success Rate: {stats['success_rate_percent']:.1f}%")
         print(f"  Last Used: {stats['last_used']}")
         print()
