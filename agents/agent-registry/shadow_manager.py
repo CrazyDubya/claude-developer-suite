@@ -344,9 +344,14 @@ class ShadowManager:
                 result = self.activate_agents(profile_agents["project"], "project")
                 results["activated"]["project"] = result
             
+            success = all(
+                result.get("success", False) and not result.get("failed")
+                for operations in results.values()
+                for result in operations.values()
+            )
             return {
-                "success": True,
-                "message": "Profile switch completed",
+                "success": success,
+                "message": "Profile switch completed" if success else "Profile switch incomplete; check operation details",
                 "backup": backup_name,
                 "details": results
             }
