@@ -970,7 +970,7 @@ print(f'   Project Archived: {archived_counts.get(\"project\", 0)}')
 print(f'   Total Agents: {status.get(\"total_agents\", 0)}')
 
 if status.get('last_profile'):
-    print(f'\\n🎯 Current Profile: {status[\"last_profile\"]}')
+    print(f'\\n🎯 Last Successful Profile: {status[\"last_profile\"]}')
 
 last_update = status.get('last_update')
 if last_update:
