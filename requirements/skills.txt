@@ -1,1 +1,2 @@
 # skills: stdlib sqlite + skill helper scripts
+pyyaml

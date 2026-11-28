@@ -233,8 +233,8 @@ else:
     for agent in agents:
         print(f'📍 {agent["name"]}')
         print(f'   {agent["description"][:100]}...')
-        print(f'   Domains: {', '.join(agent["domains"])}')
-        print(f'   Capabilities: {', '.join(agent["capabilities"])}')
+        print('   Domains: ' + ', '.join(agent["domains"]))
+        print('   Capabilities: ' + ', '.join(agent["capabilities"]))
         print()
 PYSEARCH
 }

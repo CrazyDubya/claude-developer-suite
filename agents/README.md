@@ -129,7 +129,7 @@ chmod +x commands/agent-manager.sh
 chmod +x agent-registry/setup.py
 
 # Install Python dependencies
-pip install sqlite3 pyyaml
+pip install pyyaml  # sqlite3 ships with Python
 
 # Initialize the agent database
 python agent-registry/setup.py
